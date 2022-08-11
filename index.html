@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mapbox(heat-map)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.9.2/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        text-align: left;
+      }
+
+      h3 {
+        margin-top: 4px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      mapboxgl.accessToken =
+        'pk.eyJ1IjoiZHVkZGsiLCJhIjoiY2w2ZnNhOHFkMDJkajNjbzIwa2E2dXQyZSJ9.lexIguOZeWt3dsohycwvYg';
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/duddk/cl6oiu5n0003g14kwj41w5a5d/draft',
+      });
+
+      const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: [0, -15],
+      });
+
+      map.on('mousemove', 'statedata', function (e) {
+        map.getCanvas().style.cursor = 'pointer';
+
+        // Single out the first found feature.
+        const feature = e.features[0];
+
+        // Display a popup with the name of the county
+        popup
+          .setLngLat(e.lngLat)
+          .setHTML(
+            `<h2>${feature.properties.name}</h2>
+            <h3>density: ${feature.properties.density}</h3>`
+          )
+          .addTo(map);
+      });
+
+      map.on('mouseleave', 'statedata', function () {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
+    </script>
+  </body>
+</html>
